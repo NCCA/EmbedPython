@@ -1,7 +1,7 @@
 #ifndef AGENT_H__
 #define AGENT_H__
 
-#include <Python.h>
+#include <Python/Python.h>
 
 #include <ngl/Vec3.h>
 #include <ngl/Transformation.h>
