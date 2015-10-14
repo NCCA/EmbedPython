@@ -5,8 +5,8 @@ OBJECTS_DIR=obj
 # core Qt Libs to use add more here if needed.
 QT+=gui opengl core
 # special includes for python
-unix:LIBS+= -lpython2.6 -lm -L/usr/lib/python2.6/config
-unix:INCLUDEPATH+=/usr/include/python2.6/
+unix:LIBS+= -lpython2.7 -lm -L/usr/lib/python2.7/config
+unix:INCLUDEPATH+=/usr/include/python2.7/
 
 macx:LIBS += -L/System/Library/Frameworks/Python.framework/Versions/Current/lib/
 macx:LIBS += -lpython2.7
