@@ -18,12 +18,10 @@ include_directories(${PYTHON_INCLUDE_PATH})
 
 # see what platform we are on and set platform defines
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	add_definitions(-DDARWIN)
 	find_library(MACGL OpenGL)
 	set ( PROJECT_LINK_LIBS -lNGL ${MACGL} ${PYTHON_LIBRARIES})
 
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	add_definitions(-DLINUX)
 	set ( PROJECT_LINK_LIBS -lNGL  -lGL ${PYTHON_LIBRARIES})
 
 endif()

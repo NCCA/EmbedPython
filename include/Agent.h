@@ -1,8 +1,11 @@
 #ifndef AGENT_H__
 #define AGENT_H__
 
-#include <Python/Python.h>
-
+#if defined(__APPLE__)
+    #include <Python/Python.h>
+#else
+    #include <Python.h>
+#endif
 #include <ngl/Vec3.h>
 #include <ngl/Transformation.h>
 #include <ngl/Camera.h>
