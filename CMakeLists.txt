@@ -11,8 +11,10 @@ set(SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp
 			${PROJECT_SOURCE_DIR}/src/Agent.cpp
 			${PROJECT_SOURCE_DIR}/include/NGLScene.h  
 			${PROJECT_SOURCE_DIR}/include/Agent.h
-
 )
+# use C++ 11
+set(CMAKE_CXX_STANDARD 11)
+
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_PATH})
 
