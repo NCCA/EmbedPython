@@ -32,7 +32,6 @@ Agent::Agent(std::string _file, PyObject *_main, PyObject *_dict)
 
 Agent::~Agent()
 {
-    delete m_script;
 }
 
 void Agent::draw(const ngl::Mat4 &_tx, ngl::Camera *_cam)
@@ -117,7 +116,7 @@ void Agent::reloadScript()
 {
   if(m_script !=0)
   {
-    delete m_script;
+    m_script.release();
   }
   std::ifstream script(m_filename.c_str());
   if (!script.is_open())
@@ -126,6 +125,6 @@ void Agent::reloadScript()
     exit(EXIT_FAILURE);
   }
   // now read in the data
-  m_script = new std::string((std::istreambuf_iterator<char>(script)), std::istreambuf_iterator<char>());
+  m_script.reset(  new std::string((std::istreambuf_iterator<char>(script)), std::istreambuf_iterator<char>()));
   script.close();
 }

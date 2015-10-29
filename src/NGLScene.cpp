@@ -37,8 +37,8 @@ NGLScene::NGLScene()
   // and then grab the __main__ dictionary so we can read / write data to it
   dict   = PyModule_GetDict(main);
 
-  m_agent1 = new Agent("python/agent1.py",main,dict);
-  m_agent2 = new Agent("python/agent2.py",main,dict);
+  m_agent1.reset(new Agent("python/agent1.py",main,dict));
+  m_agent2.reset(new Agent("python/agent2.py",main,dict));
 
   startTimer(20);
 }
@@ -47,20 +47,17 @@ NGLScene::NGLScene()
 NGLScene::~NGLScene()
 {
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
-  delete m_agent1;
-  delete m_agent2;
   // finally close down the python interpretor
   Py_Finalize();
 
 }
 
-void NGLScene::resizeGL(int _w, int _h)
+void NGLScene::resizeGL(QResizeEvent *_event)
 {
-  // set the viewport for openGL
-  glViewport(0,0,_w,_h);
+  m_width=_event->size().width()*devicePixelRatio();
+  m_height=_event->size().height()*devicePixelRatio();
   // now set the camera size values as the screen size has changed
-  m_cam->setShape(45,(float)_w/_h,0.05,350);
-  update();
+  m_cam.setShape(45.0f,(float)width()/height(),0.05f,350.0f);
 }
 
 
@@ -80,24 +77,21 @@ void NGLScene::initializeGL()
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)["nglDiffuseShader"]->use();
 
-  shader->setShaderParam4f("Colour",1,1,1,1);
-  shader->setShaderParam3f("lightPos",1,1,1);
-  shader->setShaderParam4f("lightDiffuse",1,1,1,1);
+  shader->setShaderParam4f("Colour",1.0f,1.0f,1.0f,1.0f);
+  shader->setShaderParam3f("lightPos",1.0f,1.0f,1.0f);
+  shader->setShaderParam4f("lightDiffuse",1.0f,1.0f,1.0f,1.0f);
   // the shader will use the currently active material and light0 so set them
   // Now we will create a basic Camera from the graphics library
   // This is a static camera so it only needs to be set once
   // First create Values for the camera position
-  ngl::Vec3 from(0,1,20);
-  ngl::Vec3 to(0,0,0);
-  ngl::Vec3 up(0,1,0);
+  ngl::Vec3 from(0.0f,1.0f,20.0f);
+  ngl::Vec3 to(0.0f,0.0f,0.0f);
+  ngl::Vec3 up(0.0f,1.0f,0.0f);
   // now load to our new camera
-  m_cam= new ngl::Camera(from,to,up);
+  m_cam.set(from,to,up);
 
   ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-  prim->createSphere("sphere",1.0,20);
-
-  // as re-size is not explicitly called we need to do this.
-  glViewport(0,0,width(),height());
+  prim->createSphere("sphere",1.0f,20.0f);
 }
 
 
@@ -106,7 +100,7 @@ void NGLScene::paintGL()
 {
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+  glViewport(0,0,m_width,m_height);
   // grab an instance of the shader manager
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)["nglDiffuseShader"]->use();
@@ -127,9 +121,9 @@ void NGLScene::paintGL()
   // draw
   shader->setShaderParam4f("Colour",1,1,0,1);
 
-  m_agent1->draw(m_mouseGlobalTX,m_cam);
+  m_agent1->draw(m_mouseGlobalTX,&m_cam);
   shader->setShaderParam4f("Colour",0.8,0.8,0.8,1);
-  m_agent2->draw(m_mouseGlobalTX,m_cam);
+  m_agent2->draw(m_mouseGlobalTX,&m_cam);
 
 }
 
