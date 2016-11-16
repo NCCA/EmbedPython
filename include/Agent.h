@@ -1,5 +1,5 @@
-#ifndef AGENT_H__
-#define AGENT_H__
+#ifndef AGENT_H_
+#define AGENT_H_
 
 #if defined(__APPLE__)
     #include <Python/Python.h>
