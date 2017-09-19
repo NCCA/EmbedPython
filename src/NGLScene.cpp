@@ -65,9 +65,9 @@ void NGLScene::initializeGL()
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)["nglDiffuseShader"]->use();
 
-  shader->setShaderParam4f("Colour",1.0f,1.0f,1.0f,1.0f);
-  shader->setShaderParam3f("lightPos",1.0f,1.0f,1.0f);
-  shader->setShaderParam4f("lightDiffuse",1.0f,1.0f,1.0f,1.0f);
+  shader->setUniform("Colour",1.0f,1.0f,1.0f,1.0f);
+  shader->setUniform("lightPos",1.0f,1.0f,1.0f);
+  shader->setUniform("lightDiffuse",1.0f,1.0f,1.0f,1.0f);
   // the shader will use the currently active material and light0 so set them
   // Now we will create a basic Camera from the graphics library
   // This is a static camera so it only needs to be set once
@@ -107,10 +107,10 @@ void NGLScene::paintGL()
   m_mouseGlobalTX.m_m[3][2] = m_modelPos.m_z;
 
   // draw
-  shader->setShaderParam4f("Colour",1,1,0,1);
+  shader->setUniform("Colour",1.0f,1.0f,0.0f,1.0f);
 
   m_agent1->draw(m_mouseGlobalTX,&m_cam);
-  shader->setShaderParam4f("Colour",0.8,0.8,0.8,1);
+  shader->setUniform("Colour",0.8f,0.8f,0.8f,1.0f);
   m_agent2->draw(m_mouseGlobalTX,&m_cam);
 
 }

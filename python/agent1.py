@@ -6,7 +6,7 @@ pos[1]=pos[1]+dir[1]*speed[1]*6
 # this is the z position
 pos[2]=pos[2]+dir[2]*speed[2]
 # now do some bounds checking
-if pos[1] > 8.0 :
+if pos[1] > 12.0 :
   speed[1] = -speed[1]
-if pos[1] < -8.0 :
+if pos[1] < -12.0 :
   speed[1] = -speed[1]
