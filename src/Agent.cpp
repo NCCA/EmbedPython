@@ -46,11 +46,11 @@ void Agent::draw(const ngl::Mat4 &_tx, ngl::Camera *_cam)
   t.setPosition(m_pos.m_x,m_pos.m_y,m_pos.m_z);
 
 
-  M=t.getMatrix()*_tx;
-  MV=  M*_cam->getViewMatrix();
-  MVP= M*_cam->getVPMatrix();
+  M=_tx*t.getMatrix();
+  MV=  _cam->getViewMatrix()*M;
+  MVP= _cam->getVPMatrix()*M;
   normalMatrix=MV;
-  normalMatrix.inverse();
+  normalMatrix.inverse().transpose();
   shader->setUniform("MVP",MVP);
   shader->setUniform("normalMatrix",normalMatrix);
   // get the VBO instance and draw the built in teapot
