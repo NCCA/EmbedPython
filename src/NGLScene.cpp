@@ -2,9 +2,6 @@
 #include <QGuiApplication>
 
 #include "NGLScene.h"
-#include <ngl/Camera.h>
-#include <ngl/Light.h>
-#include <ngl/Material.h>
 #include <ngl/NGLInit.h>
 #include <ngl/VAOPrimitives.h>
 #include <ngl/ShaderLib.h>
@@ -42,7 +39,7 @@ NGLScene::~NGLScene()
 
 void NGLScene::resizeGL( int _w, int _h )
 {
-  m_cam.setShape( 45.0f, static_cast<float>( _w ) / _h, 0.05f, 350.0f );
+  m_project=ngl::perspective(45.0f, static_cast<float>( _w ) / _h, 0.05f, 350.0f );
   m_win.width  = static_cast<int>( _w * devicePixelRatio() );
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
@@ -76,7 +73,7 @@ void NGLScene::initializeGL()
   ngl::Vec3 to(0.0f,0.0f,0.0f);
   ngl::Vec3 up(0.0f,1.0f,0.0f);
   // now load to our new camera
-  m_cam.set(from,to,up);
+  m_view=ngl::lookAt(from,to,up);
 
   ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
   prim->createSphere("sphere",1.0f,20.0f);
@@ -109,9 +106,9 @@ void NGLScene::paintGL()
   // draw
   shader->setUniform("Colour",1.0f,1.0f,0.0f,1.0f);
 
-  m_agent1->draw(m_mouseGlobalTX,&m_cam);
+  m_agent1->draw(m_mouseGlobalTX,m_view,m_project);
   shader->setUniform("Colour",0.8f,0.8f,0.8f,1.0f);
-  m_agent2->draw(m_mouseGlobalTX,&m_cam);
+  m_agent2->draw(m_mouseGlobalTX,m_view,m_project);
 
 }
 

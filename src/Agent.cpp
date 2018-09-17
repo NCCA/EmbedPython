@@ -5,16 +5,16 @@
 
 Agent::Agent(std::string _file, PyObject *_main, PyObject *_dict)
 {
-  m_script=0;
+  m_script=nullptr;
   // store the file name for the later re-load
   m_filename=_file;
   // now load the script.
   reloadScript();
    // we must be carful here to set as floats, else python will default to int even tho
   // we tell it later that we want to set from float!!
-  m_pos.set(0.0,0.0,0.0);
-  m_dir.set(0.0,0.1,0.0);
-  m_speed.set(1.0,1.0,1.0);
+  m_pos.set(0.0f,0.0f,0.0f);
+  m_dir.set(0.0f,0.1f,0.0f);
+  m_speed.set(1.0f,1.0f,1.0f);
   // now we grab main from python passed from the GLWindow
   m_main = _main;
   // and then grab the main dictionary so we can read / write data to it
@@ -34,7 +34,7 @@ Agent::~Agent()
 {
 }
 
-void Agent::draw(const ngl::Mat4 &_tx, ngl::Camera *_cam)
+void Agent::draw(const ngl::Mat4 &_tx, const ngl::Mat4 &_view, const ngl::Mat4 &_project)
 {
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
 
@@ -47,8 +47,8 @@ void Agent::draw(const ngl::Mat4 &_tx, ngl::Camera *_cam)
 
 
   M=_tx*t.getMatrix();
-  MV=  _cam->getViewMatrix()*M;
-  MVP= _cam->getVPMatrix()*M;
+  MV=  _view*M;
+  MVP= _project*MV;
   normalMatrix=MV;
   normalMatrix.inverse().transpose();
   shader->setUniform("MVP",MVP);
@@ -64,7 +64,7 @@ void Agent::update()
   // python script. Here I set the individual tuple values
   // not in this case we need a python object so we just convert to a float from double
   PyList_SetItem(m_pyPos, 0,PyFloat_FromDouble(m_pos.m_x));
-  PyList_SetItem(m_pyPos, 1,PyFloat_FromDouble( m_pos.m_y));
+  PyList_SetItem(m_pyPos, 1,PyFloat_FromDouble(m_pos.m_y));
   PyList_SetItem(m_pyPos, 2,PyFloat_FromDouble(m_pos.m_z));
   // this passes it to the main dictionary of the python script
   PyDict_SetItemString(m_dict, "pos", m_pyPos);

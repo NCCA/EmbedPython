@@ -8,7 +8,6 @@
 #endif
 #include <ngl/Vec3.h>
 #include <ngl/Transformation.h>
-#include <ngl/Camera.h>
 #include <string>
 
 class Agent
@@ -35,7 +34,7 @@ class Agent
     /// @param[in] _tx the transform stack of the current scene
     /// @param[in] _cam the current camera
     //----------------------------------------------------------------------------------------------------------------------
-    void draw( const ngl::Mat4 &_tx, ngl::Camera *_cam );
+    void draw( const ngl::Mat4 &_tx, const ngl::Mat4 &_view, const ngl::Mat4 &_project );
     //----------------------------------------------------------------------------------------------------------------------
     // @brief delete the old script and re-load
     //----------------------------------------------------------------------------------------------------------------------
