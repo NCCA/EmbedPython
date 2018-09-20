@@ -27,7 +27,7 @@ SOURCES+= $$PWD/src/main.cpp \
 # same for the .h files
 HEADERS+= $$PWD/include/Agent.h \
           $$PWD/include/NGLScene.h \
-          $$PWD/include/WindowParam.h
+          $$PWD/include/WindowParams.h
 # and add the include dir into the search path for Qt and make
 INCLUDEPATH +=./include
 # where our exe is going to live (root of project)
