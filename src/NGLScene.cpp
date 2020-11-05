@@ -1,11 +1,11 @@
-#include <QMouseEvent>
-#include <QGuiApplication>
 
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <ngl/VAOPrimitives.h>
 #include <ngl/ShaderLib.h>
-
+#include "Agent.h"
+#include <QMouseEvent>
+#include <QGuiApplication>
 
 
 NGLScene::NGLScene()
@@ -22,8 +22,8 @@ NGLScene::NGLScene()
   // and then grab the __main__ dictionary so we can read / write data to it
   dict   = PyModule_GetDict(main);
 
-  m_agent1.reset(new Agent("python/agent1.py",main,dict));
-  m_agent2.reset(new Agent("python/agent2.py",main,dict));
+  m_agent1= std::make_unique<Agent>("python/agent1.py",main,dict);
+  m_agent2= std::make_unique<Agent>("python/agent2.py",main,dict);
 
   startTimer(20);
 }
@@ -50,7 +50,7 @@ void NGLScene::initializeGL()
 {
   // we must call this first before any other GL commands to load and link the
   // gl commands from the lib, if this is not done program will crash
-  ngl::NGLInit::instance();
+  ngl::NGLInit::initialize();
 
   glClearColor(0.4f, 0.4f, 0.4f, 1.0f);			   // Grey Background
   // enable depth testing for drawing
@@ -58,13 +58,11 @@ void NGLScene::initializeGL()
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
   // now to load the shader and set the values
-  // grab an instance of shader manager
-  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-  (*shader)["nglDiffuseShader"]->use();
+  ngl::ShaderLib::use("nglDiffuseShader");
 
-  shader->setUniform("Colour",1.0f,1.0f,1.0f,1.0f);
-  shader->setUniform("lightPos",1.0f,1.0f,1.0f);
-  shader->setUniform("lightDiffuse",1.0f,1.0f,1.0f,1.0f);
+  ngl::ShaderLib::setUniform("Colour",1.0f,1.0f,1.0f,1.0f);
+  ngl::ShaderLib::setUniform("lightPos",1.0f,1.0f,1.0f);
+  ngl::ShaderLib::setUniform("lightDiffuse",1.0f,1.0f,1.0f,1.0f);
   // the shader will use the currently active material and light0 so set them
   // Now we will create a basic Camera from the graphics library
   // This is a static camera so it only needs to be set once
@@ -75,8 +73,7 @@ void NGLScene::initializeGL()
   // now load to our new camera
   m_view=ngl::lookAt(from,to,up);
 
-  ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
-  prim->createSphere("sphere",1.0f,20.0f);
+  ngl::VAOPrimitives::createSphere("sphere",1.0f,20.0f);
 }
 
 
@@ -86,9 +83,7 @@ void NGLScene::paintGL()
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
-  // grab an instance of the shader manager
-  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-  (*shader)["nglDiffuseShader"]->use();
+  ngl::ShaderLib::use("nglDiffuseShader");
 
   // Rotation based on the mouse position for our global transform
   ngl::Mat4 rotX;
@@ -104,10 +99,10 @@ void NGLScene::paintGL()
   m_mouseGlobalTX.m_m[3][2] = m_modelPos.m_z;
 
   // draw
-  shader->setUniform("Colour",1.0f,1.0f,0.0f,1.0f);
+  ngl::ShaderLib::setUniform("Colour",1.0f,1.0f,0.0f,1.0f);
 
   m_agent1->draw(m_mouseGlobalTX,m_view,m_project);
-  shader->setUniform("Colour",0.8f,0.8f,0.8f,1.0f);
+  ngl::ShaderLib::setUniform("Colour",0.8f,0.8f,0.8f,1.0f);
   m_agent2->draw(m_mouseGlobalTX,m_view,m_project);
 
 }

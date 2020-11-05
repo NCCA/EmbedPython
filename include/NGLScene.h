@@ -1,10 +1,13 @@
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
 #include <ngl/Text.h>
-#include "Agent.h"
 #include "WindowParams.h"
 #include <QOpenGLWindow>
 #include <memory>
+// note we need to pre-declare agent and include later as 
+// It uses python and Qt slots will interfere
+class Agent;
+#include <ngl/Vec3.h>
 //----------------------------------------------------------------------------------------------------------------------
 /// @file NGLScene.h
 /// @brief this class inherits from the Qt OpenGLWindow and allows us to use NGL to draw OpenGL

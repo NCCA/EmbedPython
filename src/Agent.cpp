@@ -36,26 +36,21 @@ Agent::~Agent()
 
 void Agent::draw(const ngl::Mat4 &_tx, const ngl::Mat4 &_view, const ngl::Mat4 &_project)
 {
-  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-
   ngl::Mat4 MV;
   ngl::Mat4 MVP;
   ngl::Mat3 normalMatrix;
   ngl::Mat4 M;
   ngl::Transformation t;
   t.setPosition(m_pos.m_x,m_pos.m_y,m_pos.m_z);
-
-
   M=_tx*t.getMatrix();
   MV=  _view*M;
   MVP= _project*MV;
   normalMatrix=MV;
   normalMatrix.inverse().transpose();
-  shader->setUniform("MVP",MVP);
-  shader->setUniform("normalMatrix",normalMatrix);
+  ngl::ShaderLib::setUniform("MVP",MVP);
+  ngl::ShaderLib::setUniform("normalMatrix",normalMatrix);
   // get the VBO instance and draw the built in teapot
- ngl::VAOPrimitives *prim=ngl::VAOPrimitives::instance();
- prim->draw("sphere");
+  ngl::VAOPrimitives::draw("sphere");
 }
 
 void Agent::update()

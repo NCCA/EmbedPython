@@ -1,63 +1,63 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.12)
 # Name of the project
-set(PROJECT_NAME EmbededPython)
-project(${PROJECT_NAME})
-#Bring the headers into the project (local ones)
+project(QtNGLBuild)
+# This is the name of the Exe change this and it will change everywhere
+set(TargetName QtNGL)
+# Instruct CMake to run moc automatically when needed (Qt projects only)
+set(CMAKE_AUTOMOC ON)
+# find Qt libs
+find_package(Qt5Widgets)
+#find_package(Qt5 COMPONENTS Widgets OpenGL core Gui REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(PythonLibs 2 REQUIRED)
+
+include_directories(${PYTHON_INCLUDE_PATH})
+
+# use C++ 17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
+# Set the name of the executable we want to build
+add_executable(${TargetName})
+## as we are using python we can't use the keyword slots	
+ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
+# Add NGL include path
 include_directories(include $ENV{HOME}/NGL/include)
 
-#the file(GLOB...) allows for wildcard additions of our src dir
-set(SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp  
-			${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
-			${PROJECT_SOURCE_DIR}/src/Agent.cpp
-			${PROJECT_SOURCE_DIR}/include/NGLScene.h  
-			${PROJECT_SOURCE_DIR}/include/Agent.h
-)
-# use C++ 11
-set(CMAKE_CXX_STANDARD 11)
 
-find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_PATH})
+
+target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp  
+			${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
+			${PROJECT_SOURCE_DIR}/src/Agent.cpp  
+			${PROJECT_SOURCE_DIR}/include/Agent.h  
+			${PROJECT_SOURCE_DIR}/include/NGLScene.h  
+)
+add_compile_definitions(ADDLARGEMODELS)
+
+
 
 # see what platform we are on and set platform defines
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	message("Mac build")
 	find_library(MACGL OpenGL)
-	set ( PROJECT_LINK_LIBS -lNGL ${MACGL} ${PYTHON_LIBRARIES})
-
+	add_definitions(-DGL_SCILENCE_DEPRICATION)
+	set ( PROJECT_LINK_LIBS ${MACGL})
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set ( PROJECT_LINK_LIBS -lNGL  -lGL ${PYTHON_LIBRARIES})
-
+	set ( PROJECT_LINK_LIBS -lGL)
 endif()
 
-
-#As were using Qt we need to run moc
-#disable -rdynamic
-SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
-SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
-# define this if you want to include the stanford data sets
-# these are very big and make compilation time huge
-add_definitions(-DADDLARGEMODELS)
-
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
-add_definitions(-O2 -D_FILE_OFFSET_BITS=64 -fPIC) 
-
-
 # now add NGL specific values
-#set ( PROJECT_LINK_LIBS -lNGL )
-link_directories( $ENV{HOME}/NGL/lib )
-# as NGL uses Qt we need to define this flag
-add_definitions(-DQT5BUILD)
-# NGL also needs the OpenGL framework from Qt so add it
-find_package(Qt5OpenGL)
-find_package(Qt5Widgets)
-find_package(Qt5Gui)
-find_package(Qt5Core)
+target_link_directories(${TargetName} PRIVATE $ENV{HOME}/NGL/lib )
+
+# add exe and link libs that must be after the other defines
+
+target_link_libraries(${TargetName} PRIVATE ${PROJECT_LINK_LIBS} NGL Qt5::Widgets fmt::fmt-header-only ${PYTHON_LIBRARIES} -lpthread -ldl  -lutil -lm )
 
 
-# add exe and link libs this must be after the other defines
-add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LINK_LIBS} Qt5::OpenGL Qt5::Core Qt5::Gui Qt5::Widgets )
+add_custom_target(CopyShaders ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/python
+    ${CMAKE_BINARY_DIR}/python
 
+		) 
