@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 # Name of the project
-project(QtNGLBuild)
+project(EmbedPythonBuild)
 # This is the name of the Exe change this and it will change everywhere
-set(TargetName QtNGL)
+set(TargetName EmbedPython)
 # Instruct CMake to run moc automatically when needed (Qt projects only)
 set(CMAKE_AUTOMOC ON)
 # find Qt libs
