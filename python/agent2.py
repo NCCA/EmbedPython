@@ -3,7 +3,7 @@ import math
 import time
 import pyngl
 # this get the unix clock tick as a float
-tm=time.clock()
+tm=time.process_time()
 # set some variables for radius
 radiusX=2.0
 radiusZ=4.0

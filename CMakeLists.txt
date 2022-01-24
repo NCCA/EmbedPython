@@ -25,12 +25,11 @@ find_package(NGL CONFIG REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-find_package(PythonLibs 3 REQUIRED)
+find_package (Python COMPONENTS Interpreter Development)
 
 
 # Set the name of the executable we want to build
 add_executable(${TargetName})
-include_directories(${PYTHON_INCLUDE_PATH})
 ## as we are using python we can't use the keyword slots	
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 # Add NGL include path
@@ -45,7 +44,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
 			${PROJECT_SOURCE_DIR}/include/NGLScene.h  
 )
 target_link_libraries(${TargetName} PRIVATE NGL  Qt::Widgets Qt::OpenGL )
- target_link_libraries(${TargetName} PRIVATE ${PROJECT_LINK_LIBS}  ${PYTHON_LIBRARIES} -lpthread -ldl  -lutil -lm )
+ target_link_libraries(${TargetName} PRIVATE ${PROJECT_LINK_LIBS}  Python::Python -lpthread -ldl  -lutil -lm -L/opt/homebrew/lib -lgettextpo )
 
 
 add_custom_target(CopyShaders ALL
