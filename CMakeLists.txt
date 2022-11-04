@@ -47,7 +47,7 @@ target_link_libraries(${TargetName} PRIVATE NGL  Qt::Widgets Qt::OpenGL )
  target_link_libraries(${TargetName} PRIVATE ${PROJECT_LINK_LIBS}  Python::Python -lpthread -ldl  -lutil -lm -L/opt/homebrew/lib -lgettextpo )
 
 
-add_custom_target(CopyShaders ALL
+add_custom_target(EmbedPythonCopyShaders ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/python
     ${CMAKE_BINARY_DIR}/python
