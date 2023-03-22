@@ -6,7 +6,7 @@
 #include "Agent.h"
 #include <QMouseEvent>
 #include <QGuiApplication>
-
+#include <iostream>
 NGLScene::NGLScene()
 {
 

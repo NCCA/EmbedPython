@@ -2,7 +2,7 @@
 #include<fstream>
 #include <ngl/ShaderLib.h>
 #include <ngl/VAOPrimitives.h>
-
+#include <iostream>
 Agent::Agent(std::string _file, PyObject *_main, PyObject *_dict)
 {
   m_script=nullptr;
